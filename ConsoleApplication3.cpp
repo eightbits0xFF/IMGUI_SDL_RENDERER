@@ -38,9 +38,16 @@ int main(int argc, char** argv)
     
     std::string text{"Ok Good"};
     
+    ImVec2 winSize = ImVec2((imgui_width / 2), imgui_height / 2);
+    ImVec2 winPos = ImVec2(imgui_width - (imgui_width/2), 0);
+
+    
+
     while (true)
     {
+        ImGuiIO & io = ImGui::GetIO();
 
+        io.ConfigWindowsMoveFromTitleBarOnly = false;
 
         if (SDL_PollEvent(&event) == 1) {
             switch (event.type)
@@ -51,22 +58,25 @@ int main(int argc, char** argv)
                 break;
             }
         }
+        SDL_SetRenderDrawColor(renderer, 200, 100, 50, 150);
+        SDL_RenderClear(renderer);
+
         ImGui_ImplSDL2_ProcessEvent(&event);
         SDL_RenderClear(renderer);
         ImGui_ImplSDLRenderer_NewFrame();
         ImGui_ImplSDL2_NewFrame(window);
         ImGui::NewFrame();
-        ImGui::SetNextWindowPos(ImVec2(0, 0));
-        ImGui::SetNextWindowSize(ImVec2(imgui_width/2, imgui_height/2));
+        ImGui::SetNextWindowPos(winPos);
+        ImGui::SetNextWindowSize(winSize);
         ImGui::Begin("ImGui");
         if (ImGui::Button(text.c_str()))
         {
             text.append(" YES");
         }
-        ImGui::Text("Press 'G' to show or hide this GUI-Window");
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate,
-            ImGui::GetIO().Framerate);
         ImGui::Separator();
+        
+        winSize = ImGui::GetWindowSize();
+        winPos = ImGui::GetWindowPos();
         ImGui::Text("Scene:");
 
         ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(0, 100, 0, 255));
@@ -76,7 +86,18 @@ int main(int argc, char** argv)
         }
         ImGui::PopStyleColor();
         ImGui::Separator();
+
+ 
+        
+        ImGui::Begin("test");
+        ImGui::Button("Works");
+
         ImGui::End();
+
+
+
+        ImGui::End();
+        ImGui::EndFrame();
         ImGui::Render();
         ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
         SDL_RenderPresent(renderer);
@@ -86,6 +107,9 @@ int main(int argc, char** argv)
         SDL_RenderCopy(renderer, bitmapTex, nullptr, nullptr);
         SDL_RenderPresent(renderer);
         SDL_DestroyTexture(bitmapTex);
+
+     
+        //SDL_RenderPresent(renderer);
 
     }
 	
